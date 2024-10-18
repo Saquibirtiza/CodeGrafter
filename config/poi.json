@@ -1,0 +1,221 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "definitions": {
+    "location": {
+      "type": "object",
+      "properties": {
+        "file_id": {
+          "type": "string"
+        },
+        "file_path": {
+          "description": "optional - use when file_id is not known",
+          "type": "string"
+        },
+        "src_location": {
+          "type": "object",
+          "description": "Describe a location within source via a specific line or span",
+          "properties": {
+            "start_line": {
+              "type": "integer"
+            },
+            "start_column": {
+              "type": "integer"
+            },
+            "end_line": {
+              "type": "integer"
+            },
+            "end_column": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "start_line"
+          ]
+        },
+        "rebased_location": {
+          "description": "Describe a location within a binary using a base + offset",
+          "type": "object",
+          "properties": {
+            "mapped_base": {
+              "description": "A mapped address in virtual memory space, e.g. 0x400000",
+              "type": "string"
+            },
+            "binary_offset": {
+              "description": "A 0-based offset",
+              "type": "string"
+            }
+          },
+          "required": [
+            "mapped_base",
+            "binary_offset"
+          ]
+        },
+        "section_offset": {
+          "type": "object",
+          "description": "Describe a location within a binary using a section name + offset",
+          "properties": {
+            "section_name": {
+              "description": "The name of a text or data section",
+              "type": "string"
+            },
+            "binary_offset": {
+              "description": "A 0-based offset",
+              "type": "string"
+            }
+          },
+          "required": [
+            "section_name",
+            "binary_offset"
+          ]
+        },
+        "stack_offset": {
+          "type": "object",
+          "description": "Describe a location within a binary using a stack register + offset",
+          "properties": {
+            "stack_register": {
+              "description": "The name of a stack register",
+              "type": "string"
+            },
+            "binary_offset": {
+              "description": "A 0-based offset",
+              "type": "string"
+            }
+          },
+          "required": [
+            "virtual_address"
+          ]
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "file_id"
+          ]
+        },
+        {
+          "required": [
+            "file_path"
+          ]
+        }
+      ]
+    },
+    "node": {
+      "type": "object",
+      "properties": {
+        "identifier": {
+          "type": "string"
+        },
+        "location": { "$ref": "#/definitions/location" },
+        "node_type": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "identifier",
+        "location",
+        "node_type"
+      ]
+    },
+    "edge": {
+      "properties": {
+        "source": {
+          "type": "string"
+        },
+        "destination": {
+          "type": "string"
+        },
+        "edge_type": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "source",
+        "destination",
+        "edge_type"
+      ]
+    }
+  },
+  "type": "object",
+  "properties": {
+    "identifier": {
+      "type": "string"
+    },
+    "challenge": {
+      "type": "string"
+    },
+    "target": {
+      "type": "string"
+    },
+    "timestamp": {
+      "type": "string"
+    },
+    "actor": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "actor_type": {
+          "type": "string",
+          "enum": ["HUMAN", "CRS"]
+        }
+      },
+      "required": [
+        "name",
+        "actor_type"
+      ]
+    },
+    "poi_type": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "insight": {
+      "type": "object",
+      "properties": {
+        "nodes": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/node" }
+        },
+        "edges": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/edge" }
+        }
+      },
+      "required": [
+        "nodes",
+        "edges"
+      ]
+    },
+    "priority": {
+      "type": "string",
+      "enum": ["HIGH", "MODERATE", "LOW"]
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "identifier",
+    "challenge",
+    "target",
+    "actor",
+    "poi_type",
+    "title",
+    "description",
+    "insight"
+  ]
+}

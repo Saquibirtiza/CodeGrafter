@@ -1,0 +1,60 @@
+id,function,file,start,end,ret,params,class,cyclomatic,loops,nestDegree,sloc,aloc,localVars,localPtrVars,globalVarList,ptrArgs,isReturningPtrs,callees,callers,height,conditions,cmps,jmps,vulnScore,codeComplexity,vuln
+3732,is_valid_email,main.c,925,993,['int'],['const char * email'],None,43,4,0,30,100,4,2,None,1,0,6,5,8,13,14,27,547,1,0
+89,local_strlen,main.c,69,81,['int'],['const char * src'],None,7,1,0,8,22,1,0,None,1,0,0,81,6,2,2,4,129,-1,0
+133,local_strstr,main.c,85,113,['char *'],['const char * src;const char * sub'],None,17,2,0,16,53,3,0,None,2,0,2,14,6,5,6,10,253,-1,0
+265,local_strcat,main.c,116,133,['char *'],['char * dest;const char * src'],None,11,1,0,14,36,3,0,None,2,0,1,24,10,2,3,5,132,-1,0
+363,get_date_time,main.c,136,233,['char *'],[''],None,23,0,0,53,97,3,2,None,0,0,6,4,10,4,2,8,246,0,0
+780,write_wrapper,main.c,236,254,['int'],['int fd;char * buffer;int length'],None,11,0,0,11,28,1,0,None,1,0,1,90,6,3,3,6,163,-1,0
+845,send_string,main.c,257,269,['int'],['int fd;char * str'],None,6,0,0,9,23,1,0,None,1,0,2,40,8,1,1,2,85,-1,0
+897,print_domains,main.c,272,283,['void'],[''],None,4,2,0,7,21,0,2,None,0,0,1,0,10,2,2,3,69,-1,0
+948,parse_domain_name,main.c,286,310,['int'],['char * dn'],None,12,2,0,15,46,3,0,None,1,0,2,1,8,4,5,9,179,-1,0
+1057,readuntil,main.c,313,337,['int'],['int fd;char * buffer;int maxlen;char terminator'],None,11,1,0,16,47,2,0,None,1,0,1,9,1,4,4,7,226,-1,0
+1158,domain_exists,main.c,340,362,['int'],['char * domain'],None,12,1,0,11,29,0,2,None,1,0,1,1,8,4,4,8,169,-1,0
+1232,init_domain,main.c,365,396,['int'],['char * domain'],None,19,0,0,16,50,0,2,None,1,0,5,1,6,4,4,8,249,-1,0
+1365,getdomain,main.c,399,417,['pdomainlist_t'],['char * domain'],None,9,1,0,10,27,0,2,None,1,1,1,2,8,3,3,6,136,-1,0
+1431,print_tree,main.c,420,435,['void'],['pemail_t root'],None,11,0,0,9,25,0,2,None,0,0,2,2,10,3,3,3,121,-1,0
+1501,add_email_leaf,main.c,440,490,['int'],['pdomainlist_t dm;char * email'],None,25,2,0,28,75,1,6,None,1,0,5,1,8,8,8,16,329,0,0
+1742,add_email,main.c,493,511,['int'],['char * email;char * domain'],None,12,0,0,11,32,0,2,None,2,0,3,2,6,2,3,5,174,-1,0
+1818,ingest_emaillist,main.c,514,557,['int'],[''],None,11,2,0,26,78,5,1,None,0,0,9,1,1,3,3,5,232,-1,0
+2036,setup_socket,main.c,561,601,['int'],['int port'],None,27,0,0,23,67,2,0,None,0,0,9,1,4,4,4,7,345,-1,0
+2276,valid_email,main.c,604,665,['int'],['char * email'],None,29,2,0,28,65,3,5,None,1,0,5,7,8,10,9,19,374,0,0
+2505,cleanup_global,main.c,668,718,['void'],[''],None,28,2,0,34,51,1,0,None,0,0,1,1,8,8,8,9,345,-1,0
+2764,search_email_substr,main.c,721,758,['int'],['char * em;pdomainlist_t pdml'],None,18,2,0,20,45,1,4,None,1,0,2,1,10,7,7,13,232,-1,0
+2913,search_all_domains,main.c,761,780,['int'],['char * em'],None,9,1,0,10,28,0,2,None,1,0,1,1,8,3,3,6,135,-1,0
+2974,handle_VRFY,main.c,783,813,['int'],['int fd;char * line'],None,30,0,0,16,67,2,1,None,1,0,8,1,6,4,4,7,357,-1,0
+3164,handle_HELO,main.c,816,899,['int'],['int fd;char * line;struct sockaddr_in * sin'],None,59,0,0,37,134,3,1,None,1,0,11,1,6,10,11,18,671,1,0
+3615,handle_QUIT,main.c,902,922,['int'],['int fd'],None,14,0,0,12,47,1,0,None,0,0,7,1,6,2,2,4,188,-1,0
+3999,handle_MAIL_FROM,main.c,996,1068,['int'],['int fd;char * line'],None,52,0,0,32,136,3,1,None,1,0,9,1,6,8,8,15,593,1,0
+4401,get_username,main.c,1071,1093,['int'],['const char * email;char * user'],None,14,0,0,11,35,1,1,None,2,0,2,4,8,3,4,7,177,-1,0
+4482,is_writeable,main.c,1096,1114,['int'],['char * tty'],None,11,0,0,11,48,1,0,None,1,0,3,1,10,2,2,4,119,-1,0
+4584,user_logged_in,main.c,1117,1143,['int'],['char * user'],None,16,1,0,13,50,1,0,None,1,0,5,2,1,4,4,7,276,-1,0
+4714,find_tty,main.c,1147,1177,['int'],['const char * user;char * tty'],None,20,2,0,16,61,1,0,None,2,0,7,2,1,5,6,9,332,-1,0
+4875,handle_RCPT_TO,main.c,1180,1308,['int'],['int fd;char * line'],None,105,0,0,53,222,5,2,None,1,0,14,1,3,17,19,32,1191,1,0
+5624,handle_RSET,main.c,1311,1370,['int'],['int fd'],None,33,2,0,40,82,2,0,None,0,0,5,1,6,8,8,9,415,0,0
+5951,handle_NOOP,main.c,1373,1382,['int'],['int fd'],None,4,0,0,7,36,1,0,None,0,0,4,1,6,0,0,0,80,-1,0
+6009,handle_EXPN,main.c,1385,1466,['int'],['int fd;char * line'],None,42,4,0,42,130,6,1,None,1,0,13,1,1,11,10,18,591,1,0
+6418,write_message,main.c,1469,1493,['int'],['char * tty;char * message'],None,16,0,0,14,59,2,0,None,2,0,7,22,10,2,3,5,172,-1,0
+6543,send_to_file,main.c,1497,1569,['int'],['int fd'],None,12,7,0,44,140,8,2,None,0,0,12,2,8,7,7,11,237,1,0
+6986,send_to_terminal,main.c,1572,1620,['int'],['int fd'],None,7,5,0,31,84,5,1,None,0,0,7,2,3,5,5,8,209,0,0
+7262,send_to_either,main.c,1623,1740,['int'],['int fd'],None,16,11,0,55,190,7,2,None,0,0,16,1,3,11,11,18,382,1,1
+7964,handle_SEND,main.c,1744,1763,['int'],['int fd'],None,29,0,0,12,36,0,0,None,0,0,4,2,5,5,7,11,363,-1,0
+8080,handle_SEND_FROM,main.c,1766,1835,['int'],['int fd;char * line'],None,52,0,0,32,136,3,1,None,1,0,9,1,6,8,8,15,593,1,0
+8482,handle_SOML_FROM,main.c,1838,1908,['int'],['int fd;char * line'],None,52,0,0,30,136,3,1,None,1,0,9,1,6,8,8,15,593,1,0
+8884,handle_SAML_FROM,main.c,1911,1980,['int'],['int fd;char * line'],None,52,0,0,30,136,3,1,None,1,0,9,1,6,8,8,15,593,1,0
+9286,handle_DATA,main.c,1983,2063,['int'],['int fd'],None,27,4,0,40,123,4,1,None,0,0,10,1,1,10,9,17,437,1,0
+9695,handle_DMAIL,main.c,2066,2094,['int'],['int fd'],None,18,0,0,17,56,2,0,None,0,0,6,1,6,3,3,5,231,-1,0
+9838,handle_RMAIL,main.c,2097,2148,['int'],['int fd'],None,31,0,0,27,84,3,1,None,0,0,10,1,1,5,5,10,421,0,0
+10081,encodeblock,main.c,2153,2181,['void'],['unsigned char * in;unsigned char * out;int len'],None,12,0,0,14,49,0,0,None,2,0,0,2,2,3,4,6,215,-1,0
+10220,encode_b64,main.c,2184,2220,['void'],['unsigned char * in;unsigned char * * out;int len'],None,25,2,0,24,65,4,1,None,2,0,3,0,10,4,5,7,289,-1,0
+10402,getIndex,main.c,2223,2240,['int'],['char c'],None,9,0,0,11,31,2,1,None,0,0,1,4,10,2,2,4,99,-1,0
+10473,decodeblock,main.c,2243,2279,['void'],['unsigned char * in;unsigned char * out'],None,22,0,0,18,58,2,0,None,2,0,2,1,10,4,7,5,238,-1,0
+10656,decode_b64,main.c,2282,2318,['void'],['unsigned char * in;unsigned char * * out'],None,26,1,0,20,65,4,1,None,2,0,4,5,8,4,6,7,310,-1,0
+10806,check_user_pass,main.c,2321,2379,['int'],['char * user;char * pass;int * perms'],None,23,5,0,32,79,5,3,None,3,0,10,3,1,7,9,12,404,0,0
+11096,handle_LEXPN,main.c,2382,2436,['int'],['int fd'],None,26,2,0,28,99,4,1,None,0,0,12,1,1,6,5,10,392,0,0
+11376,handle_HELP,main.c,2439,2491,['int'],['int fd;char * line'],None,106,0,0,43,92,1,1,None,1,0,4,1,6,18,18,36,1174,1,0
+11814,handle_AUTH,main.c,2494,2506,['int'],['int fd;char * line'],None,154,0,0,53,192,8,4,None,1,0,13,1,1,24,24,49,1732,1,1
+12990,send_banner,main.c,2713,2728,['void'],['int fd'],None,6,0,0,11,52,3,0,None,0,0,5,1,6,0,0,0,100,-1,0
+13085,read_loop,main.c,2731,2827,['int'],['int client_fd;struct sockaddr_in * si'],None,29,18,0,52,148,2,0,None,0,0,27,2,1,21,20,39,640,1,0
+13695,accept_loop,main.c,2830,2850,['int'],['int fd'],None,11,0,0,15,45,2,0,None,0,0,5,1,1,1,1,2,204,-1,0
+13826,usage,main.c,2853,2859,['void'],['char * pn'],None,3,0,0,6,14,0,0,None,1,0,2,5,3,0,0,0,101,-1,0
+13861,main,main.c,2862,2971,['int'],['int argc;char * * argv'],None,32,1,0,61,88,8,2,None,1,0,15,6,1,14,6,11,454,0,0

@@ -1,0 +1,9 @@
+FROM erlking-img:5.0
+
+USER utd
+WORKDIR /home/utd
+
+RUN mkdir /home/utd/logs
+RUN mkdir /home/utd/db
+ADD erlking /home/utd/erlking
+ADD config /home/utd/config

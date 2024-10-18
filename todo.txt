@@ -1,0 +1,8 @@
+Things to be done
+------------------------
+Making Joern to work in python3
+BAP side-effects expression solver
+Message framework integration
+DWARVENking pointer analysis
+sigBIN taking significant time
+multithread sigBIN and DWARVENking

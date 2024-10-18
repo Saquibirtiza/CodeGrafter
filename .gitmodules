@@ -1,0 +1,6 @@
+[submodule "dependencies/chess_system_sandbox"]
+	path = dependencies/chess_system_sandbox
+	url = https://chessexternal.apogee-research.com:8888/apogee_ta5/chess_system_sandbox.git
+[submodule "dependencies/message_set_coordination"]
+	path = dependencies/message_set_coordination
+	url = https://chessexternal.apogee-research.com:8888/apogee_ta5/message-set-coordination.git

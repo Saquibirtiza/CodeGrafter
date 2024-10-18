@@ -1,0 +1,11 @@
+#!/bin/bash
+if [ -z "$1" ]; then
+    eval "$(opam env)"
+    python3 -u /home/utd/erlking/erlking.py
+    # python3 /home/utd/.local/lib/python3.6/site-packages/mprof.py run --multiprocess --include-children /home/utd/erlking/erlking.py
+    mv /home/utd/*.dat /home/utd/logs
+else
+    if [ "$1" == "status" ]; then
+       tail -1 /home/utd/logs/erlking.pid
+    fi
+fi

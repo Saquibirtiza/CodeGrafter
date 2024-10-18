@@ -1,0 +1,52 @@
+# Currently this contains only the example topics and subsystems
+{
+  "topics": { # Only the topics you subscribe to
+    "Request_Response": { # <Topic Name>
+      "messages": # {<file path>: {"package": <>, "messages": []}}}
+        {
+          "ar.chess_message.proto": {
+            "package": "ar.chess_messages",
+            "messages": ["Request", "Response"]
+            }
+        },
+      "subsystem_pub_ports": # {<ss name> : <publish port>}
+        {
+          "ss_1": 6001,
+          "ss_2": 6002,
+          "ss_3": 6003,
+          "ss_4": 6004,
+          "ss_5": 6005,
+          "ss_6": 6006
+        }
+    },
+    "Mission": {
+            "messages":{
+                    "aptima.chcshared.proto": {
+                            "package": "aptima.chcprotos",
+                            "messages": ["Target", "POI"]
+                    },
+                    "ar.chess_message.proto": {
+                            "package": "ar.chess_messages",
+                            "messages": ["Response"]
+                    }
+            },
+            "subsystem_pub_ports": {
+                    "ss_1": 7001,
+                    "ss_2": 7002,
+                    "ss_3": 7003,
+                    "ss_4": 7004,
+                    "ss_5": 7005,
+                    "ss_6": 7006
+            }
+    }
+  },
+  "subsystem_pub_hosts": { # Only the subsystems you communicate with
+    "ss_1": "localhost",
+    "ss_2": "localhost",
+    "ss_3": "localhost",
+    "ss_4": "localhost",
+    "ss_5": "localhost",
+    "ss_6": "localhost"
+  },
+  "my_subsystems": ["ss_1", "ss_2", "ss_3", "ss_4", "ss_5", "ss_6"]
+}

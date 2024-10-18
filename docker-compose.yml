@@ -1,0 +1,90 @@
+version: "3.7" 
+networks: 
+  chess_net: 
+    external: true 
+services: 
+  erlking: 
+    image: erlking-img:5.0 
+    stdin_open: true
+    tty: true
+    #entrypoint: ["bash", "/home/utd/run.sh"] 
+    #entrypoint: ["bash", "/bin/erlking"] 
+    entrypoint: ["/bin/bash"] 
+    # working_dir: /home/utd
+    networks: 
+      - chess_net 
+    ports: 
+      - target: 7474 
+        published: 7474 
+        mode: host 
+      - target: 7473 
+        published: 7473
+    #For flask web UI
+      - target: 7475
+        published: 7475
+      - target: 2009
+        published: 2009
+        mode: host
+    volumes: 
+      - type: bind 
+        source: ./erlking
+        target: /home/utd/erlking
+      - type: bind 
+        source: ./logs
+        target: /home/utd/logs    
+      - type: bind 
+        source: ./targets
+        target: /home/utd/targets            
+      - type: bind 
+        source: ./config
+        target: /home/utd/config
+      - type: bind 
+        source: ./db
+        target: /home/utd/db
+  erlking-chess: 
+    image: erlking-img:5.0 
+    stdin_open: true
+    tty: true
+    #entrypoint: ["bash", "/home/utd/run.sh"] 
+    #entrypoint: ["python3", "/home/utd/erlking/chess/chess_daemon.py"] 
+    entrypoint: ["bash","/home/utd/scripts/start_chess_daemon.sh"]
+    networks: 
+      - chess_net
+    ports: 
+      - target: 7474 
+        published: 7474 
+        mode: host 
+      - target: 7473 
+        published: 7473
+      - target: 2009
+        published: 2009
+    volumes: 
+      - type: bind 
+        source: ./erlking
+        target: /home/utd/erlking
+      - type: bind 
+        source: ./logs
+        target: /home/utd/logs    
+      - type: bind 
+        source: ./config
+        target: /home/utd/config
+      - type: bind 
+        source: ./db
+        target: /home/utd/db
+  erlking-chess-release: 
+    image: erlking-release:5.0 
+    stdin_open: true
+    tty: true
+    #entrypoint: ["bash", "/home/utd/run.sh"] 
+    #entrypoint: ["python3", "/home/utd/erlking/chess/chess_daemon.py"] 
+    entrypoint: ["bash","/home/utd/scripts/start_chess_daemon.sh"]
+    networks: 
+      - chess_net
+    ports: 
+      - target: 7474 
+        published: 7474 
+        mode: host 
+      - target: 7473 
+        published: 7473      
+      - target: 2009
+        published: 2009

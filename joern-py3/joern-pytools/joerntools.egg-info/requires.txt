@@ -1,0 +1,3 @@
+chardet
+joern>=0.1
+pygraphviz

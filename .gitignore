@@ -1,0 +1,9 @@
+#targets/**/db/*
+targets/*
+!targets/**/db/readme
+# targets/**/src/.joernIndex
+# logs/*.log
+# *.pyc
+# targets/adams/*
+logs/*
+db/chess.db

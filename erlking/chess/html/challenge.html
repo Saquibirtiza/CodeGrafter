@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+  <title>%s</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="stylesheet" href="/css/normalize.css">
+  <link rel="stylesheet" href="/css/skeleton.css">
+  <link rel="stylesheet" href="/css/custom.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.7.2/build/styles/default.min.css">
+
+
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="/images/favicon.png">
+
+  <!-- Source snippet loading script and syntax highlighting
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.7.2/build/highlight.min.js"></script>
+  <script>
+    let challenge = "%s";
+    function loadSnippet(codeElement,newSnippet){
+      /* Escape characters in text snippet with Option() constructor.
+         Presumably this is because only escaped text content is allowed in an option
+         element, so it's the simplest and easiest element to use in order to get the
+         browser to escape the text for you. */
+      codeElement.innerHTML = new Option(newSnippet).innerHTML;
+      if( newSnippet != "Requested file does not exist." && !newSnippet.startsWith("Cannot display source snippet because the specific line number could not be automatically determined.") ){
+        hljs.highlightBlock(codeElement);
+      }
+    }
+    /* Comparison functions for sorting POIs */
+    function stringComparison(a, b){
+      if( a < b ){
+        return -1;
+      }
+      if( a > b ){
+        return 1;
+      }
+      return 0;
+    }
+    /* Convert to nums and compare */
+    function numComparison(a, b){
+      return Number(a)-Number(b);
+    }
+    /* Rank by user ranking, then erlking ranking */
+    function rankingComparison(a, b){
+      let av = a.querySelector(".poiuserranking").innerHTML;
+      let bv = b.querySelector(".poiuserranking").innerHTML;
+      /* Swap the two to compare, as we want highest first in the default sort order */
+      let result = numComparison(bv,av);
+      if( result == 0 ){
+        av = a.querySelector(".poiranking").innerHTML;
+        bv = b.querySelector(".poiranking").innerHTML;
+        /* Swap the two to compare, as we want highest first in the default sort order */
+        result = numComparison(bv,av);
+        if( result == 0 ){
+          /* If both user and automatic ranking are equal, just sort by ID */
+          return idComparison(a,b);
+        }
+        return result;
+      }
+      return result;
+    }
+    /* Use the ranking comparison as a fallback for all other sorting categories, so that
+       all POIs with the same value for the comparison are sorted by ranking */
+    function titleComparison(a, b){
+      let av = a.querySelector(".poititle").innerHTML;
+      let bv = b.querySelector(".poititle").innerHTML;
+      let result = stringComparison(av,bv);
+      if( result == 0 ){
+        return rankingComparison(a,b);
+      }
+      return result;
+    }
+    function descriptionComparison(a, b){
+      let av = a.querySelector(".poidescription").innerHTML;
+      let bv = b.querySelector(".poidescription").innerHTML;
+      let result = stringComparison(av,bv);
+      if( result == 0 ){
+        return rankingComparison(a,b);
+      }
+      return result;
+    }
+    function fileComparison(a, b){
+      let av = a.querySelector(".poisourcefile").innerHTML;
+      let bv = b.querySelector(".poisourcefile").innerHTML;
+      let result = stringComparison(av,bv);
+      if( result == 0 ){
+        return rankingComparison(a,b);
+      }
+      return result;
+    }
+    function idComparison(a, b){
+      let av = a.querySelector(".poiid").innerHTML;
+      let bv = b.querySelector(".poiid").innerHTML;
+      let result = numComparison(av,bv);
+      /* IDs should always be unique, so they can be used to
+         give a unique sort order when all else is equal. */
+      return result;
+    }
+    function functionComparison(a, b){
+      let av = a.querySelector(".poifunction").innerHTML;
+      let bv = b.querySelector(".poifunction").innerHTML;
+      let result = stringComparison(av,bv);
+      if( result == 0 ){
+        return rankingComparison(a,b);
+      }
+      return result;
+    }
+    function complexityComparison(a, b){
+      let av = a.querySelector(".poicomplexity").innerHTML.trim().split(' ').pop();
+      let bv = b.querySelector(".poicomplexity").innerHTML.trim().split(' ').pop();
+      let complexMap = {"high":0,"moderate":1,"low":2,"unknown":3,"0":1000}
+      let result = numComparison(complexMap[av],complexMap[bv]);
+      if( result == 0 ){
+        return rankingComparison(a,b);
+      }
+      return result;
+    }
+    function updateVote(detail,display,selectedButton,otherButton,vote) {
+      if( Number(vote) < 0 ){
+        if( !detail.classList.contains('lowscore') ){
+          detail.classList.add('lowscore');
+        }
+      }else{
+        detail.classList.remove('lowscore');
+      }
+      display.innerHTML = vote;
+      otherButton.classList.remove('currentvote');
+      selectedButton.classList.toggle('currentvote');
+    }
+    /* Called by detailLoader */
+    function voter(detail, challenge) {
+      let upvoteButton = detail.querySelector('.upvote');
+      let downvoteButton = detail.querySelector('.downvote');
+      let voteDisplay = detail.querySelector('.poiuserranking');
+      let poi = detail.querySelector('.poiid').innerHTML;
+      upvoteButton.addEventListener('click', event => {
+        detail.open = !detail.open; /* Toggle detail because vote button is in summary */
+        if( upvoteButton.classList.contains('currentvote') ) {
+          fetch(`/vote/${challenge}?poi=${poi}&novote=1`)
+              .then( response => response.text())
+              .then(data => updateVote(detail,voteDisplay,upvoteButton,downvoteButton,data))
+              .catch((error) => { updateVote(detail,voteDisplay,upvoteButton,downvoteButton,'?'); });
+        }else{
+          fetch(`/vote/${challenge}?poi=${poi}&upvote=1`)
+              .then( response => response.text())
+              .then(data => updateVote(detail,voteDisplay,upvoteButton,downvoteButton,data))
+              .catch((error) => { updateVote(detail,voteDisplay,upvoteButton,downvoteButton,'?'); });
+        }
+      });
+      downvoteButton.addEventListener('click', event => {
+        detail.open = !detail.open; /* Toggle detail because vote button is in summary */
+        if( downvoteButton.classList.contains('currentvote') ) {
+          fetch(`/vote/${challenge}?poi=${poi}&novote=1`)
+              .then( response => response.text())
+              .then(data => updateVote(detail,voteDisplay,downvoteButton,upvoteButton,data))
+              .catch((error) => { updateVote(detail,voteDisplay,downvoteButton,upvoteButton,'?'); });
+        }else{
+          fetch(`/vote/${challenge}?poi=${poi}&downvote=1`)
+              .then( response => response.text())
+              .then(data => updateVote(detail,voteDisplay,downvoteButton,upvoteButton,data))
+              .catch((error) => { updateVote(detail,voteDisplay,downvoteButton,upvoteButton,'?'); });
+        }
+      });
+    }
+    /* Function for adding functionality to send a POI to Blaze */
+    function blazer(detail, challenge) {
+      let blazeButton = detail.querySelector('.blaze');
+      let poi = detail.querySelector('.poiid').innerHTML;
+      let success = detail.querySelector('.success');
+      let failure = detail.querySelector('.failure');
+      blazeButton.addEventListener('click', event => {
+        success.setAttribute('hidden', true);
+        failure.setAttribute('hidden', true);
+        fetch(`/blaze/${challenge}/${poi}`)
+             .then( response => {
+                 if( response.ok ){
+                   blazeButton.style.borderColor = 'lime';
+                   blazeButton.style.backgroundColor = 'palegreen';
+                   blazeButton.innerHTML = "Sent to Blaze";
+                   success.removeAttribute('hidden');
+                 }else{
+                   blazeButton.style.borderColor = 'red';
+                   blazeButton.style.backgroundColor = 'pink';
+                   blazeButton.innerHTML = "Send to Blaze";
+                   failure.removeAttribute('hidden');
+                 }
+               })
+             .catch(error => {
+               blazeButton.style.borderColor = 'red';
+               blazeButton.style.backgroundColor = 'pink';
+               blazeButton.innerHTML = "Send to Blaze";
+               failure.removeAttribute('hidden');
+             });
+      });
+    }
+    function loadNotes(notesEditor,notesArea,data){
+      if( "error" in data ){
+        notesArea.innerHTML = "<i>An error occurred while attempting to fetch notes.</i>";
+      }else if( "notes" in data ){
+        note_text = ""
+        /* Fill in the list of all notes */
+        for( let note of data["notes"] ){
+          /* Escape characters in text snippet with Option() constructor.
+             Presumably this is because only escaped text content is allowed in an option
+             element, so it's the simplest and easiest element to use in order to get the
+             browser to escape the text for you. */
+          let who = new Option(note[0]).innerHTML;
+          let what = new Option(note[1]).innerHTML;
+          note_text += `<div class="row"><i>${who}:</i> ${what}</div>`
+        }
+        notesArea.innerHTML = note_text;
+        /* Fill in text field with the current user's note */
+        if( "yours" in data ){
+          notesField = notesEditor.querySelector('input');
+          notesField.value = data["yours"];
+        }
+      }
+    }
+    function noter(detail, challenge) {
+      let poi = detail.querySelector('.poiid').innerHTML;
+      let notesButton = detail.querySelector('.button.notes');
+      let notesEditor = detail.querySelector('.notes-editor');
+      let notesArea = detail.querySelector('.notes-area');
+      let notesForm = notesEditor.querySelector('.notes-form');
+      /* Notes button toggles whether the notes editor is hidden */
+      notesButton.addEventListener('click', event => {
+        if( notesEditor.hasAttribute('hidden') ){
+          notesEditor.removeAttribute('hidden');
+        }else{
+          notesEditor.setAttribute('hidden', true);
+        }
+      });
+      /* Submit button sends notes to web server and gets response */
+      notesForm.addEventListener('submit', event => {
+        event.preventDefault(); /* No refreshing the page */
+        let notes = new URLSearchParams();
+        notes.append("notes",notesEditor.querySelector('input').value);
+        fetch(`/notes/${challenge}/${poi}`,
+          {
+            method: 'POST',
+            body: notes
+          }).then( response => response.json() ).then(data => loadNotes(notesEditor,notesArea,data)).catch( error => loadNotes(notesEditor,notesArea,{"error":error}));
+      });
+    }
+    function detailLoader() {
+      let details = document.getElementsByTagName("details");
+      for(let detail of details){
+        let code = detail.querySelector('code');
+        let poi = detail.querySelector('.poiid').innerHTML;
+        let notesEditor = detail.querySelector('.notes-editor');
+        let notesArea = detail.querySelector('.notes-area');
+        detail.addEventListener("toggle", event => {
+          if (detail.open) {
+            /* the element was toggled open */
+            /* Load only if we haven't already successfully loaded */
+            if( code.innerHTML == "loading..." || 
+                code.innerHTML == "Requested file does not exist." ){
+              let sourcefile = detail.querySelector('.poisourcefile').innerHTML;
+              let sourceline = detail.querySelector('.poisourceline').innerHTML;
+              fetch(`/source/${challenge}?file=${encodeURIComponent(sourcefile)}&line=${sourceline}`).then( response => response.text()).then(data => loadSnippet(code,data));
+            }
+            /* Fetch notes as well, every time this is expanded, in case something has changed */
+            fetch(`/notes/${challenge}/${poi}`).then( response => response.json() ).then( data => loadNotes(notesEditor,notesArea,data) ).catch( error => loadNotes(notesEditor,notesArea,{"error":error}));
+          } else {
+            /* the element was toggled closed */
+          }
+        });
+        /* Register upvote and downvote button callbacks */
+        voter(detail,challenge);
+        /* Register blaze button callbacks */
+        blazer(detail,challenge);
+        /* Register notes buttons callbacks */
+        noter(detail,challenge);
+      }
+    }
+    function sorter() {
+      let sortOptions = document.getElementById("sortdropdown").children;
+      let sortMap = {"Ranking":rankingComparison,"Title":titleComparison,"Description":descriptionComparison,"File":fileComparison,"ID":idComparison,
+                     "Function":functionComparison,"Code Complexity":complexityComparison};
+      let spinner = document.getElementById('spinner');
+      for( let option of sortOptions ){
+        let rankName = option.innerHTML;
+        option.addEventListener("click", event => {
+          //spinner.removeAttribute('hidden');
+          let poitable = document.getElementById('poitable');
+          /* Convert NodeList to array for sorting? */
+          let pois = Array.prototype.slice.call(poitable.children,0);
+          /* Grab the appropriate comparison function and sort */
+          pois.sort(sortMap[rankName]);
+          /* Wipe out POI table contents */
+          poitable.innerHTML = "";
+          /* Replace with sorted contents */
+          for(let i = 0, l = pois.length; i < l; i++){
+            poitable.appendChild(pois[i]);
+          }
+          /* Highlight current sort option and un-highlight the rest */
+          for(let o of sortOptions){
+            if( o == option ){
+              o.setAttribute('class','currentsort');
+            }else{
+              o.removeAttribute('class');
+            }
+          }
+          //spinner.setAttribute('hidden','');
+        });
+      }
+      /* Simulate clicking first sort option here so that it automatically sorts user rankings */
+      sortOptions[0].click();
+    }
+    /* Check whether any POIs have changed */
+    function comparepois(poijson){
+      let poitable = document.getElementById('poitable');
+      /* Convert NodeList to array for sorting? */
+      let pois = Array.prototype.slice.call(poitable.children,0);
+      for(let i = 0, l = pois.length; i < l; i++){
+        let poiid = pois[i].querySelector('.poiid').innerHTML;
+        let localVote = pois[i].querySelector('.poiuserranking').innerHTML;
+        if( poijson[poiid] != localVote ){
+          document.querySelector('.poinotification').removeAttribute('hidden');
+          return;
+        }
+      }
+      /* Check if poi lists are different sizes.  Unfortunately the dict type has no O(1) length method */
+      if( Object.keys(poijson).length != pois.length ){
+          document.querySelector('.poinotification').removeAttribute('hidden');
+          return;
+      }
+      /* Check again 2 minutes later if we haven't detected changes yet */
+      setTimeout(poicheck, 120000);
+    }
+    function poicheck(){
+      // Fetch poi status
+      fetch(`/status/${challenge}`).then( response => response.json()).then(data => comparepois(data));
+    }
+    function poihider(){
+      let hidedownvoted = document.getElementById('hidedownvoted');
+      let hiddencounttext = document.getElementById('hiddencount');
+      hidedownvoted.addEventListener("click", event => {
+        if( hidedownvoted.checked ){
+          document.cookie = "hidedownvoted=yes; path=/";
+        }else{
+          document.cookie = "hidedownvoted=no; path=/";
+        }
+        let hiddencount = 0;
+        let poitable = document.getElementById('poitable');
+        /* Convert NodeList to array for sorting? */
+        let pois = Array.prototype.slice.call(poitable.children,0);
+        for(let i = 0, l = pois.length; i < l; i++){
+          let votes = parseInt( pois[i].querySelector('.poiuserranking').innerHTML, 10 );
+          /* Only hide a POI if box is checked and vote is negative */
+          if( votes < 0 && hidedownvoted.checked ){
+            pois[i].style.display = "none";
+            hiddencount++;
+          }else if( !hidedownvoted.checked ){
+            pois[i].style.display = "";
+          }
+        }
+        if( hidedownvoted.checked ){
+          hiddencounttext.innerHTML = ` (${hiddencount} hidden)`;
+        }else{
+          hiddencounttext.innerHTML = "";
+        }
+      });
+    }
+    function init() {
+      detailLoader();
+      sorter();
+      poicheck();
+      poihider();
+    }
+    window.onload = init;
+  </script>
+
+</head>
+<body>
+  <button onclick="topFunction()" id="topBtn" title="Go to top">UP</button>
+  <button onclick="bottomFunction()" id="bottomBtn" title="Go to top">DOWN</button>
+
+  <!-- Primary Page Layout
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <div class="container" style="border-bottom: 1px solid #eee">
+    <span><a href="/">Home</a></span>
+    <span class="u-pull-right">Hello %s.
+      <form class="inlineform" method="POST">
+        <input type="hidden" name="username" value="">
+        <input id="logoutsubmit" type="submit" value="Logout">
+      </form>
+    </span>
+  </div>
+  <div class="container">
+  <section class="header">
+    <div class="row">
+      <div class="eight columns">
+        <h1 class="title">
+          %s
+        </h1>
+      </div>
+      <div class="u-pull-right">
+        <h5>%s</h5>
+      </div>
+    </div>
+  </section>
+  %s
+  %s
+  %s
+  </div>
+  <div hidden class="poinotification">
+    One or more POIs have been updated.  <a href="javascript:window.location.reload(true)">Click here</a> to refresh.
+  </div>
+<!-- End Document
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <script>
+//Get the button
+var topbutton = document.getElementById("topBtn");
+var bottombutton = document.getElementById("bottomBtn");
+
+// When the user scrolls down 20px from the top of the document, show the button
+window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+  if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+    topbutton.style.display = "block";
+  } else {
+    topbutton.style.display = "none";
+  }
+}
+
+// When the user clicks on the button, scroll to the top of the document
+function topFunction() {
+  document.body.scrollTop = 0;
+  document.documentElement.scrollTop = 0;
+}
+
+function bottomFunction() {
+  window.scrollTo(0,document.body.scrollHeight);
+}
+</script>
+</body>
+</html>

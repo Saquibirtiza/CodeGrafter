@@ -1,0 +1,2 @@
+The database in this directory contains persistent data for the
+chess system.  To reset the system's state, delete chess.db.

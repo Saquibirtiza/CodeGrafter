@@ -1,0 +1,28 @@
+version: "3.7" 
+volumes:
+  db_volume:
+networks: 
+  chess_net: 
+    external: true 
+services: 
+  erlking-chess-release: 
+    image: 077943246560.dkr.ecr.us-east-2.amazonaws.com/integrated_chess_system/uic/erlking/erlking:8.3
+    stdin_open: true
+    tty: true
+    entrypoint: ["bash","/home/utd/scripts/start_chess_daemon.sh"]
+    volumes:
+      - db_volume:/home/utd/db
+    networks: 
+      - chess_net
+    ports: 
+      - target: 7474 
+        published: 7474
+        mode: host 
+      - target: 7473
+        published: 7473
+      - target: 2009
+        published: 2009
+    deploy:
+      placement:
+        constraints:
+          - node.labels.utd == true
